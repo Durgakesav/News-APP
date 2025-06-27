@@ -10,13 +10,13 @@ function App() {
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
   const [darkMode, setDarkMode] = useState(true); // theme toggle
-
+  const apikey = 'e9a9994c0e7d4f96968960888b074c00';
   const fetchSearchResults = async (searchQuery) => {
     const q = searchQuery.trim() || 'global';
     setLoading(true);
     setError(null);
     try {
-      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&apiKey=${import.meta.env.VITE_NEWS_API_KEY}&pageSize=20`;
+      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&apiKey=${apikey}&pageSize=20`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`NewsAPI error: ${res.status} ${res.statusText}`);
       const data = await res.json();
