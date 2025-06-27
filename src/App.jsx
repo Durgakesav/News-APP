@@ -16,7 +16,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&apiKey=${apikey}&pageSize=20`;
+      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&apiKey=${import.meta.env.VITE_NEWS_API_KEY}&pageSize=20`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`NewsAPI error: ${res.status} ${res.statusText}`);
       const data = await res.json();
