@@ -10,7 +10,7 @@ function App() {
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
   const [darkMode, setDarkMode] = useState(true); // theme toggle
-  const apikey = e9a9994c0e7d4f96968960888b074c00;
+  const apikey = 'e9a9994c0e7d4f96968960888b074c00';
   const fetchSearchResults = async (searchQuery) => {
     const q = searchQuery.trim() || 'global';
     setLoading(true);
