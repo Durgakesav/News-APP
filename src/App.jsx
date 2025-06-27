@@ -9,20 +9,23 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(true); // theme toggle
-  const apikey = 'e9a9994c0e7d4f96968960888b074c00';
+  const [darkMode, setDarkMode] = useState(true);
+
+  // Use env variable, or fallback to hardcoded (not recommended for production)
+  const apiKey = import.meta.env.VITE_NEWS_API_KEY || 'e9a9994c0e7d4f96968960888b074c00';
+
   const fetchSearchResults = async (searchQuery) => {
     const q = searchQuery.trim() || 'global';
     setLoading(true);
     setError(null);
     try {
-      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&apiKey=${import.meta.env.VITE_NEWS_API_KEY}&pageSize=20`;
+      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&apiKey=${apiKey}&pageSize=20`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`NewsAPI error: ${res.status} ${res.statusText}`);
       const data = await res.json();
       setArticles(data.articles || []);
-    } catch (error) {
-      console.error("Fetch error:", error);
+    } catch (err) {
+      console.error("Fetch error:", err);
       setError("Failed to load news. Please try again.");
       setArticles([]);
     }
@@ -33,7 +36,6 @@ function App() {
     fetchSearchResults('');
   }, []);
 
-  // Apply theme to body
   useEffect(() => {
     document.body.className = darkMode ? 'dark-theme' : 'light-theme';
   }, [darkMode]);
@@ -44,7 +46,7 @@ function App() {
 
   return (
     <div className="main-layout">
-      {/* Bulb theme toggle button at top right */}
+      {/* Theme toggle button */}
       <button
         className="theme-bulb-toggle"
         aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -52,10 +54,16 @@ function App() {
       >
         {darkMode ? (
           // Bulb on (filled)
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="#FFD600" stroke="#FFD600" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="6" fill="#FFD600"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="#FFD600" stroke="#FFD600" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="6" fill="#FFD600" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
         ) : (
           // Bulb off (outline)
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD600" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="6"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD600" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="6" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
         )}
       </button>
 
@@ -84,8 +92,8 @@ function App() {
 
         <div className="news-list">
           {articles.length > 0 ? (
-            articles.map((article) => (
-              <NewsCard key={article.url} article={article} />
+            articles.map((article, index) => (
+              <NewsCard key={article.url || index} article={article} />
             ))
           ) : (
             !loading && !error && <p>No articles found.</p>
